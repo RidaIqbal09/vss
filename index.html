@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloudflare App</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            padding:40px;
+        }
+
+        .box{
+            background:white;
+            padding:20px;
+            width:400px;
+            margin:auto;
+            border-radius:10px;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin-top:10px;
+        }
+
+        button{
+            margin-top:10px;
+            padding:10px;
+            width:100%;
+            background:blue;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+
+        .user{
+            background:#eee;
+            margin-top:10px;
+            padding:10px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="box">
+
+    <h2>Add User</h2>
+
+    <input type="text" id="name" placeholder="Enter Name">
+
+    <input type="email" id="email" placeholder="Enter Email">
+
+    <button onclick="addUser()">Add User</button>
+
+    <h3>Users List</h3>
+
+    <div id="users"></div>
+
+</div>
+
+<script>
+
+async function loadUsers(){
+
+    let response = await fetch("http://127.0.0.1:8787/users");
+
+    let data = await response.json();
+
+    let usersDiv = document.getElementById("users");
+
+    usersDiv.innerHTML = "";
+
+    data.forEach(user => {
+
+        usersDiv.innerHTML += `
+            <div class="user">
+                <b>${user.name}</b><br>
+                ${user.email}
+            </div>
+        `;
+    });
+}
+
+async function addUser(){
+
+    let name = document.getElementById("name").value;
+
+    let email = document.getElementById("email").value;
+
+    await fetch("http://127.0.0.1:8787/add",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify({
+            name:name,
+            email:email
+        })
+
+    });
+
+    loadUsers();
+}
+
+loadUsers();
+
+</script>
+
+</body>
+</html>
